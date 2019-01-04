@@ -1,0 +1,45 @@
+:root {
+	--bulb-width: 9.8vw;
+	--bulb-radius: calc((10vw - var(--bulb-width)) / 2);
+}
+
+.bulb {
+	border-style: solid;
+	border-color: white; 
+	border-width: var(--bulb-radius);
+	border-radius: 50%;
+	width: var(--bulb-width);
+	height: var(--bulb-width);
+}
+
+.reset-button {
+	height: var(--bulb-width);
+	width: 45vw;
+	border-radius: 5px;
+	border: solid black var(--bulb-radius);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: black;
+	color: white;
+	margin: 5px;
+}
+
+
+#board {
+	background: black;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	width: calc(10 * (var(--bulb-width) + 2 * var(--bulb-radius)));
+}
+
+#buttons {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	font-size: 40px;
+}
+
