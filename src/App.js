@@ -175,12 +175,17 @@ class App extends Component {
     render() {
         return (
             <div id="app">
-                <ButtonToolbar id="buttons">
+                <div className="buttons">
+                <ButtonToolbar>
                     <ButtonGroup>
                       <Button onClick={() => this.goBack(true)}>Undo</Button>
                       <Button onClick={() => this.goBack(false)}>Redo</Button>
                       <Button bsStyle="danger" onClick={this.resetAll}>Reset All</Button>
-                      <DropdownButton title="Size" pullRight noCaret id="size">
+                      </ButtonGroup>
+                      </ButtonToolbar>
+                      <ButtonToolbar>
+                      <ButtonGroup>
+                      <DropdownButton title="Size" pullLeft noCaret id="size">
                         <MenuItem header>
                             Change the size of the bulbs
                         </MenuItem>
@@ -193,7 +198,7 @@ class App extends Component {
                         <MenuItem onClick={() => this.changeSize(60)}>60x60</MenuItem>
                         <MenuItem onClick={() => this.changeSize(70)}>70x70</MenuItem>
                       </DropdownButton>
-                      <DropdownButton title="Sensitivity" pullRight noCaret id="sensitivity">
+                      <DropdownButton title="Sensitivity" noCaret id="sensitivity">
                         <MenuItem header>
                             Change double click speed
                         </MenuItem>
@@ -218,6 +223,7 @@ class App extends Component {
                         </DropdownButton>
                     </ButtonGroup>
                 </ButtonToolbar>
+                </div>
                 <Picture 
                 lights={this.state.lights} 
                 changeClicking={this.changeClicking} 

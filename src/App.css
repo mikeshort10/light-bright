@@ -20,28 +20,24 @@ body {
   font: black;
 }
 
+.btn-toolbar {
+	display: flex;
+	justify-content: center;
+}
+
+.btn {
+	width:15vw;
+}
+
+.buttons {
+	margin: auto;
+}
+
 .bulb {
 	border-radius: 50%;
 	width: var(--cell-width);
 	height: var(--cell-width);
 }
-
-.help-box {
-	width: 50px;
-}
-
-.reset-button {
-	padding: 10px;
-	border-radius: 5px;
-	border: solid black var(--bulb-radius);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background: black;
-	color: white;
-	margin: 5px;
-}
-
 
 #board {
 	margin: auto;
@@ -51,12 +47,4 @@ body {
 	flex-wrap: wrap;
 	justify-content: space-around;
 	width: var(--board-width);
-}
-
-#buttons {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: space-around;
-	font-size: 40px;
 }
