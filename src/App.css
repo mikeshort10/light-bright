@@ -30,6 +30,10 @@ body {
 	font-size: 2vw;
 }
 
+.dropdown-menu, .dropdown-header {
+	font-size: 2vw;
+}
+
 .buttons {
 	margin: auto;
 }

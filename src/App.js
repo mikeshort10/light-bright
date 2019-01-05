@@ -114,7 +114,7 @@ class App extends Component {
     changeClicking() {
         this.setState({
             clicking: !this.state.clicking
-        }, () => console.log(this.state.clicking))
+        })
     }
 
     resetAll() {
