@@ -26,7 +26,8 @@ body {
 }
 
 .btn {
-	width:15vw;
+	width: 15vw;
+	font-size: 2vw;
 }
 
 .buttons {
