@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import {DropdownButton, Glyphicon, MenuItem, Radio, Button, ButtonGroup, ButtonToolbar, FormGroup} from 'react-bootstrap'
+import {DropdownButton, MenuItem, Button, ButtonGroup, ButtonToolbar} from 'react-bootstrap'
 
 //ensure app can work on touch screen as well 
 //Add Redux
@@ -33,10 +33,6 @@ class Light {
     }
 }
 
-function ResetButton(props) {
-    return 
-}
-
 function Bulb(props) {
     let on = props.light.light ? '50' : '0';
     let divStyle = {
@@ -52,9 +48,6 @@ function Picture(props) {
             bulbArr.push(<Bulb key={i} light={props.lights[i]} changeClicking={props.changeClicking} handleClick={x => props.handleClick(i)} handleSlide={x => props.handleSlide(i)} />);
         }
         return bulbArr;
-        /*if (props.lights.length === index) return bulbArr;
-        bulbArr.push(<Bulb key={index} color={props.lights[index].color} handleClick={x => props.handleClick(index)}/>);
-        recursivelyCreateBulbs(++index, bulbArr);*/
     }
 
     return <div id="board">{recursivelyCreateBulbs()}</div>
@@ -65,24 +58,27 @@ class App extends Component {
         super(props);
         this.initBoardSize = 70;
         this.state = {
+            stepNumber: 0,
             sensitivity: 250,
             clicking: false,
             recentClick: undefined,
             lastClicked: undefined,
-            lights: Array(Math.pow(this.initBoardSize, 2)).fill().map(x => new Light())
+            lastColor: undefined,
+            lights: Array(Math.pow(this.initBoardSize, 2)).fill().map(x => new Light()),
+            history: []
         }
 
-        this.resetColor = this.resetColor.bind(this);
+        this.goBack = this.goBack.bind(this);
         this.resetAll = this.resetAll.bind(this);
         this.changeClicking = this.changeClicking.bind(this);
     }
 
     handleClick(index, clr) {
-        console.log(this.state.lastColor)
-        let lights = [...this.state.lights];
-        let current = lights[index];
+        let lights = this.state.lights.slice(0);
+        let current = Object.assign(new Light(), lights[index]);
         let recentClick = this.state.recentClick;
-        let timeout;
+        let newStep = this.state.stepNumber + 1;
+        let timeout; 
 
         if (recentClick === index && current.light) {
             current.color = 330;
@@ -96,19 +92,22 @@ class App extends Component {
             timeout = setTimeout(() => this.setState({ recentClick: undefined }), this.state.sensitivity);
         }
 
+        lights[index] = current;
+
         clearTimeout(this.state.timeout);
 
         this.setState({
+            stepNumber: newStep,
             lights: lights,
             lastClicked: recentClick === index ? undefined : index,
             recentClick: recentClick === index ? undefined : index,
             timeout: timeout,
-            lastColor: clr || current.color
+            lastColor: clr || current.color,
+            history: this.state.history.slice(0, newStep).concat([lights])
         })
     }
 
     handleSlide(index) {
-        //console.log(this.state.clicking);
         if (this.state.clicking) this.handleClick(index, this.state.lastColor);
     }
 
@@ -118,30 +117,33 @@ class App extends Component {
         })
     }
 
-    resetColor() {
-        let lights = [...this.state.lights];
-        let last = lights[this.state.lastClicked];
-        last.color = "b";
-        //last.light = false;
-
-        this.setState({
-            lights: lights,
-            lastColor: last.color
-        })
-    }
-
     resetAll() {
-        let lights = [...this.state.lights]
+
+        let lights = this.state.lights.slice(0)
 
         for (let i = 0; i < lights.length; i++) {
-            lights[i].light = false;
-            lights[i].color = 330;
+            let x = Object.assign({}, lights[i]);
+            x.light = false;
+            x.color = 330;
+            lights[i] = x
         }
 
         this.setState({
             lights: lights,
             lastClicked: undefined,
-            lastColor: undefined
+            lastColor: undefined,
+            history: [lights],
+            stepNumber: 0
+        })
+    }
+
+    goBack (undo) {
+        let newStep = undo ? this.state.stepNumber - 1 : this.state.stepNumber + 1;
+        if (newStep >= this.state.history.length || newStep < 0) return;
+        let lights = this.state.history[newStep].slice(0);
+        this.setState({
+            stepNumber: newStep,
+            lights: lights
         })
     }
 
@@ -163,6 +165,9 @@ class App extends Component {
     componentDidMount () {
         document.addEventListener("mousedown", this.changeClicking);
         document.addEventListener("mouseup", this.changeClicking);
+        this.setState({
+            history: [...this.state.history, this.state.lights.slice(0)]
+        })
     }
 
     render() {
@@ -170,9 +175,14 @@ class App extends Component {
             <div id="app">
                 <ButtonToolbar id="buttons">
                     <ButtonGroup>
-                      <Button onClick={this.resetColor}>Reset Color</Button>
+                      <Button onClick={() => this.goBack(true)}>Undo</Button>
+                      <Button onClick={() => this.goBack(false)}>Redo</Button>
                       <Button bsStyle="danger" onClick={this.resetAll}>Reset All</Button>
                       <DropdownButton title="Size" pullRight noCaret id="size">
+                        <MenuItem header>
+                            Change the size of the bulbs
+                        </MenuItem>
+                        <MenuItem divider/>
                         <MenuItem onClick={() => this.changeSize(10)}>10x10</MenuItem>
                         <MenuItem onClick={() => this.changeSize(20)}>20x20</MenuItem>
                         <MenuItem onClick={() => this.changeSize(30)}>30x30</MenuItem>
@@ -182,10 +192,28 @@ class App extends Component {
                         <MenuItem onClick={() => this.changeSize(70)}>70x70</MenuItem>
                       </DropdownButton>
                       <DropdownButton title="Sensitivity" pullRight noCaret id="sensitivity">
-                        <MenuItem onClick={() => this.changeSensitivity(500)}>Low</MenuItem>
+                        <MenuItem header>
+                            Change double click speed
+                        </MenuItem>
+                        <MenuItem divider/>
+                        <MenuItem onClick={() => this.changeSensitivity(500)}>Slow - For Turning Off Bulbs</MenuItem>
                         <MenuItem onClick={() => this.changeSensitivity(250)}>Normal</MenuItem>
-                        <MenuItem onClick={() => this.changeSensitivity(100)}>High</MenuItem>
+                        <MenuItem onClick={() => this.changeSensitivity(100)}>Fast - For Changing Colors</MenuItem>
                       </DropdownButton>
+                      <DropdownButton title="Help" pullRight noCaret id="instructions">
+                        <MenuItem disabled>
+                            Click on any bulb to light it up.
+                        </MenuItem>
+                        <MenuItem disabled>
+                            Drag to light up multiple bulbs.
+                        </MenuItem>
+                        <MenuItem disabled>
+                            Double click quickly to turn off a bulb.
+                        </MenuItem>
+                        <MenuItem disabled>
+                            Click on any bulb to change the current color.
+                        </MenuItem>                 
+                        </DropdownButton>
                     </ButtonGroup>
                 </ButtonToolbar>
                 <Picture 
