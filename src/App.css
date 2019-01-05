@@ -1,20 +1,26 @@
 :root {
-	--bulb-width: 9.8vw;
-	--bulb-radius: calc((10vw - var(--bulb-width)) / 2);
+	--bulb-width: .98vw;
+	--bulb-radius: calc((1vw - var(--bulb-width)) / 2);
+	--board-width: 95vw;
+	--cell-width: calc(var(--board-width)/70);
+}
+
+body {
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+  font: black;
 }
 
 .bulb {
-	border-style: solid;
-	border-color: white; 
-	border-width: var(--bulb-radius);
 	border-radius: 50%;
-	width: var(--bulb-width);
-	height: var(--bulb-width);
+	width: var(--cell-width);
+	height: var(--cell-width);
 }
 
 .reset-button {
-	height: var(--bulb-width);
-	width: 45vw;
+	padding: 10px;
 	border-radius: 5px;
 	border: solid black var(--bulb-radius);
 	display: flex;
@@ -27,12 +33,13 @@
 
 
 #board {
+	margin: auto;
 	background: black;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-around;
-	width: calc(10 * (var(--bulb-width) + 2 * var(--bulb-radius)));
+	width: var(--board-width);
 }
 
 #buttons {
@@ -42,4 +49,3 @@
 	justify-content: space-around;
 	font-size: 40px;
 }
-
