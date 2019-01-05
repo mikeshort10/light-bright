@@ -39,7 +39,7 @@ function Bulb(props) {
         background: 'hsl(' + props.light.color + ', 100%, ' + on + '%)'
     }
 
-    return <div className="bulb" style={divStyle} onClick={props.handleClick} onMouseEnter={props.handleSlide}/>
+    return <div className="bulb" style={divStyle} onClick={props.handleClick}  onPointerOver={props.handleSlide}/>
 }
 
 function Picture(props) {
@@ -114,7 +114,7 @@ class App extends Component {
     changeClicking() {
         this.setState({
             clicking: !this.state.clicking
-        })
+        }, () => console.log(this.state.clicking))
     }
 
     resetAll() {
@@ -165,6 +165,8 @@ class App extends Component {
     componentDidMount () {
         document.addEventListener("mousedown", this.changeClicking);
         document.addEventListener("mouseup", this.changeClicking);
+        document.addEventListener("touchstart", this.changeClicking);
+        document.addEventListener("touchend", this.changeClicking);
         this.setState({
             history: [...this.state.history, this.state.lights.slice(0)]
         })
