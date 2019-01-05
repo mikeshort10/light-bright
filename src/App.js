@@ -3,10 +3,6 @@ import './App.css';
 import {DropdownButton, Glyphicon, MenuItem, Radio, Button, ButtonGroup, ButtonToolbar, FormGroup} from 'react-bootstrap'
 
 //ensure app can work on touch screen as well 
-//add settings
-    //Resolution
-    //Sensitivity
-//add Bootstrap
 //Add Redux
     //Undo
     //Redo
@@ -67,11 +63,13 @@ function Picture(props) {
 class App extends Component {
     constructor(props) {
         super(props);
+        this.initBoardSize = 70;
         this.state = {
+            sensitivity: 250,
             clicking: false,
             recentClick: undefined,
             lastClicked: undefined,
-            lights: Array(4900).fill().map(x => new Light())
+            lights: Array(Math.pow(this.initBoardSize, 2)).fill().map(x => new Light())
         }
 
         this.resetColor = this.resetColor.bind(this);
@@ -80,6 +78,7 @@ class App extends Component {
     }
 
     handleClick(index, clr) {
+        console.log(this.state.lastColor)
         let lights = [...this.state.lights];
         let current = lights[index];
         let recentClick = this.state.recentClick;
@@ -90,11 +89,11 @@ class App extends Component {
             current.light = false;
         }
         else {
-            current.light = true;
             if (this.state.clicking) current.color = clr;
             else if (current.light) current.color = "f";
-            else current.color = this.state.lastColor;
-            timeout = setTimeout(() => this.setState({ recentClick: undefined }), 250);
+            else current.color = this.state.lastColor || 0;
+            current.light = true;
+            timeout = setTimeout(() => this.setState({ recentClick: undefined }), this.state.sensitivity);
         }
 
         clearTimeout(this.state.timeout);
@@ -146,6 +145,21 @@ class App extends Component {
         })
     }
 
+    changeSize (size) {
+        document.documentElement.style.setProperty('--cell-width', 'calc(var(--board-width)/' + size + ')')
+        this.setState({
+            lastColor: undefined,
+            clicking: false,
+            recentClick: undefined,
+            lastClicked: undefined,
+            lights: Array(Math.pow(size, 2)).fill().map(x => new Light())
+        })
+    }
+
+    changeSensitivity (speed) {
+        this.setState({ sensitivity : speed })
+    }
+
     componentDidMount () {
         document.addEventListener("mousedown", this.changeClicking);
         document.addEventListener("mouseup", this.changeClicking);
@@ -159,18 +173,18 @@ class App extends Component {
                       <Button onClick={this.resetColor}>Reset Color</Button>
                       <Button bsStyle="danger" onClick={this.resetAll}>Reset All</Button>
                       <DropdownButton title="Size" pullRight noCaret id="size">
-                        <MenuItem>10x10</MenuItem>
-                        <MenuItem>20x20</MenuItem>
-                        <MenuItem>30x30</MenuItem>
-                        <MenuItem>40x40</MenuItem>
-                        <MenuItem>50x50</MenuItem>
-                        <MenuItem>60x60</MenuItem>
-                        <MenuItem>70x70</MenuItem>
+                        <MenuItem onClick={() => this.changeSize(10)}>10x10</MenuItem>
+                        <MenuItem onClick={() => this.changeSize(20)}>20x20</MenuItem>
+                        <MenuItem onClick={() => this.changeSize(30)}>30x30</MenuItem>
+                        <MenuItem onClick={() => this.changeSize(40)}>40x40</MenuItem>
+                        <MenuItem onClick={() => this.changeSize(50)}>50x50</MenuItem>
+                        <MenuItem onClick={() => this.changeSize(60)}>60x60</MenuItem>
+                        <MenuItem onClick={() => this.changeSize(70)}>70x70</MenuItem>
                       </DropdownButton>
                       <DropdownButton title="Sensitivity" pullRight noCaret id="sensitivity">
-                        <MenuItem>Low</MenuItem>
-                        <MenuItem>Normal</MenuItem>
-                        <MenuItem>High</MenuItem>
+                        <MenuItem onClick={() => this.changeSensitivity(500)}>Low</MenuItem>
+                        <MenuItem onClick={() => this.changeSensitivity(250)}>Normal</MenuItem>
+                        <MenuItem onClick={() => this.changeSensitivity(100)}>High</MenuItem>
                       </DropdownButton>
                     </ButtonGroup>
                 </ButtonToolbar>

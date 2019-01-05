@@ -1,9 +1,16 @@
-:root {
-	--bulb-width: .98vw;
-	--bulb-radius: calc((1vw - var(--bulb-width)) / 2);
-	--board-width: 95vw;
-	--cell-width: calc(var(--board-width)/70);
-}
+@media (orientation: landscape) {
+	:root {
+		--board-width: 95vh;
+		--cell-width: calc(var(--board-width)/70);
+	}
+}	
+
+@media (orientation: portrait) {
+	:root {
+		--board-width: 95vw;
+		--cell-width: calc(var(--board-width)/70);
+	}
+}		
 
 body {
   -webkit-user-select: none; /* Safari 3.1+ */
